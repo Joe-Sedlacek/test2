@@ -104,7 +104,7 @@ int process_characters(char filename[]){
 
 
 
-int isFound(char buf[], int size, struct WordFreq **wfpp){ //returns position of struct where word is found, or -1 if not found
+int isFound(char buf[], int size, struct WordFreq **wfpp){ //returns position of struct where word is found, or -1 if not found.
 
     int index; 
     index=0;
