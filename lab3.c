@@ -33,9 +33,11 @@ void bubble_sort(struct WordFreq **wfpp, int size);
 
 
 int main(int argc, char* argv[]){
-    struct WordFreq *list = NULL;
-    int num = 0;
-    int fileOK = 1;
+    int num;
+    int fileOK;
+    num=0;
+    fileOK=1;
+    
 
     /*if less than two files are given*/
     if(argc < 3){ 
@@ -65,16 +67,20 @@ int process_characters(char filename[]){
     char ch;
     FILE *filePtr;
     char buffer[MAX_STRING_SIZE]; 
-    int n = 0;
+    int n;
     int size;
     /* Creating pointer to array of struct pointers*/
     struct WordFreq **wfpp;
     int index; 
     bool first_word;
     char *str_buff;
+
+    /*Initializing variables*/
     buffer[0] = '\0';
     first_word=false;
-    
+    n=0;
+
+
     /* Initializing pointers to NULL */
 
     filePtr=NULL;
@@ -89,10 +95,6 @@ int process_characters(char filename[]){
         return 0;
     }
 
-    /*________________________________________________________________________________________________*/
-
-    
-
 
     /* Creating space for first pointer to first struct for first word*/
     wfpp=(struct WordFreq **) malloc(sizeof(struct WordFreq *)); 
@@ -102,10 +104,6 @@ int process_characters(char filename[]){
 
     /* Size of pointer array is 1 becuase we have 1 unique word at this point*/
     size=1;
-
-
-    /*_________________________________________________________________________________________________*/
-
 
      /*get first character from file*/
     ch = fgetc(filePtr);
@@ -118,7 +116,7 @@ int process_characters(char filename[]){
         if(n>= 19){ 
 
             /*print word*/
-            printf("cString %s count &d \n", buffer); 
+            printf("cString %s \n", buffer); 
 
             str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
             strcpy(str_buff, buffer);
@@ -126,8 +124,8 @@ int process_characters(char filename[]){
 
             /* If this is first word, add it to struct */
             if(first_word==false){
-                first_word=true;
 
+                first_word=true;
                 wfpp[0]->word = str_buff;
                 wfpp[0]->count = 1;
 
@@ -208,7 +206,7 @@ int process_characters(char filename[]){
             }
 
             else{
-                wfpp=add_word(wfpp, str_buff, size);
+                wfpp = add_word(wfpp, str_buff, size);
                 size++;
             }
         }
@@ -226,7 +224,7 @@ int process_characters(char filename[]){
         ch = fgetc(filePtr); 
     }
 
-   // bubble_sort(wfpp, size);
+    bubble_sort(wfpp, size);
 
     fclose(filePtr);
     return 1;
