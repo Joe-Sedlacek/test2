@@ -3,7 +3,7 @@
  * arguments. If the file name is not provided or the file is not readable, the program will exit
  * and provide an error message.
  *
- * @author Your Name Here {@literal }
+ * @author Your Name Here {Joe Sedlacek}
  * @date Jan. 30, 2022
  * @assignment Lab 3
  * @course CSC 250
@@ -28,6 +28,8 @@ struct WordFreq {
 int process_characters(char filename[]);
 int is_found(char buf[], int size, struct WordFreq **wfppp);
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size);
+void swap(struct WordFreq *first, struct WordFreq *second);
+void bubble_sort(struct WordFreq **wfpp, int size);
 
 
 int main(int argc, char* argv[]){
@@ -69,6 +71,7 @@ int process_characters(char filename[]){
     struct WordFreq **wfpp;
     int index; 
     bool first_word;
+    char *str_buff;
     buffer[0] = '\0';
     first_word=false;
     
@@ -115,23 +118,25 @@ int process_characters(char filename[]){
         if(n>= 19){ 
 
             /*print word*/
-            printf("cString %s \n", buffer); 
+            printf("cString %s count &d \n", buffer); 
 
-            
+            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
+            strcpy(str_buff, buffer);
+
 
             /* If this is first word, add it to struct */
             if(first_word==false){
                 first_word=true;
 
-                wfpp[0]->word = buffer;
+                wfpp[0]->word = str_buff;
                 wfpp[0]->count = 1;
 
 
             }
-
+            else{
             /*Call method to go through array of pointers to structs to see if word exists already*/
-            index = is_found(buffer, size, wfpp);
-
+            index = is_found(str_buff, size, wfpp);
+            
             /*If word is found, increment count by 1*/
             if(index>-1){
                 wfpp[index]->count = wfpp[index]->count+1;
@@ -139,9 +144,10 @@ int process_characters(char filename[]){
             }
 
             else{
-                wfpp=add_word(wfpp, buffer, size);
+                wfpp=add_word(wfpp, str_buff, size);
                 size++;
             }
+        }
 
 
             /*reset null terminator*/
@@ -176,24 +182,24 @@ int process_characters(char filename[]){
             /* print word */
             printf("cString %s \n", buffer); 
 
+            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
+            strcpy(str_buff, buffer);
 
             /* CHECK When we malloc space for new string, Add null character! */
 
-
-            
 
             /* If this is first word, add it to struct*/
             if(first_word==false){
                 first_word=true;
 
-                wfpp[0]->word = buffer;
+                wfpp[0]->word = str_buff;
                 wfpp[0]->count = 1;
 
 
             }
-
+            else{
             /*Call method to go through array of pointers to structs to see if word exists already*/
-            index = is_found(buffer, size, wfpp);
+            index = is_found(str_buff, size, wfpp);
 
             /*If word is found, increment count by 1*/
             if(index>-1){
@@ -202,9 +208,10 @@ int process_characters(char filename[]){
             }
 
             else{
-                wfpp=add_word(wfpp, buffer, size);
+                wfpp=add_word(wfpp, str_buff, size);
                 size++;
             }
+        }
 
             /* reset null terminator */
             buffer[0] = '\0'; 
@@ -219,6 +226,8 @@ int process_characters(char filename[]){
         ch = fgetc(filePtr); 
     }
 
+   // bubble_sort(wfpp, size);
+
     fclose(filePtr);
     return 1;
 }
@@ -230,7 +239,10 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
     int index; 
     index=0;
 
+    /*Iterate through array of pointers to structs*/
     while(index < size){
+
+        printf("Comparing %s to %s", buf, wfpp[index] ->word);
 
         if(strcmp(buf, wfpp[index]->word) == 0){
 
@@ -249,10 +261,34 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
 
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size){
 
+    /*Allocate space for one more pointer*/
     wfpp = (struct WordFreq**) realloc((void*) wfpp, (sizeof(struct WordFreq *) * size) + 1);
+    /*Allocate space for one more struct*/
     wfpp[size] = (struct WordFreq *) malloc(sizeof(struct WordFreq));
+
+    /*Add in word and count*/
     wfpp[size]->word= buf;
     wfpp[size]->count = 1;
 
     return wfpp;
+}
+
+
+/*Swap pointers*/
+void swap(struct WordFreq *first, struct WordFreq *second){
+
+    struct WordFreq *temp;
+    temp=NULL;
+
+    temp = first;
+    first=second;
+    second=temp;
+
+}
+
+void bubble_sort(struct WordFreq **wfpp, int size){
+
+
+
+
 }
