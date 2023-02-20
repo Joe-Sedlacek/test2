@@ -25,17 +25,16 @@ struct WordFreq {
 
 /* function declarations go here */
 
-int process_characters(char filename[]);
+int process_characters(char filename[], char output[]);
 int is_found(char buf[], int size, struct WordFreq **wfppp);
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size);
-void swap(struct WordFreq *first, struct WordFreq *second);
-void bubble_sort(struct WordFreq **wfpp, int size);
+struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size);
+void swap(struct WordFreq **first, struct WordFreq **second);
+void print_results(char output[], struct WordFreq ** wfpp, int size);
 
 
 int main(int argc, char* argv[]){
-    int num;
     int fileOK;
-    num=0;
     fileOK=1;
     
 
@@ -45,7 +44,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    fileOK = process_characters(argv[1]);
+    fileOK = process_characters(argv[1], argv[2]);
 
     if(!fileOK){
         printf("%s could not open file %s \n", argv[0], argv[1]);
@@ -63,7 +62,7 @@ int main(int argc, char* argv[]){
     need a different type of return value.
     You may decide to open the fie in main and pass the file pointer as an argument.
 */
-int process_characters(char filename[]){
+int process_characters(char filename[], char output[]){
     char ch;
     FILE *filePtr;
     char buffer[MAX_STRING_SIZE]; 
@@ -74,7 +73,6 @@ int process_characters(char filename[]){
     int index; 
     bool first_word;
     char *str_buff;
-    int k;
 
     /*Initializing variables*/
     buffer[0] = '\0';
@@ -113,11 +111,10 @@ int process_characters(char filename[]){
     while(ch != EOF) { 
 
 
-    /* variable for keeping track of where we are in array of pointers */
         if(n>= 19){ 
 
 
-            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
+            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
             strcpy(str_buff, buffer);
 
 
@@ -177,7 +174,7 @@ int process_characters(char filename[]){
         else if(n > 0){ 
 
 
-            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
+            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
             strcpy(str_buff, buffer);
 
 
@@ -220,15 +217,11 @@ int process_characters(char filename[]){
         ch = fgetc(filePtr); 
     }
 
-    printf("%d", size);
 
-    bubble_sort(wfpp, size);
+    wfpp=bubble_sort(wfpp, size);
 
-    for(k=0; k<size; k++){
-
-        //printf("Word: %s, Count: %d \n", wfpp[k]->word, wfpp[k]->count);
-
-    }
+    
+    print_results(output, wfpp, size);
 
     fclose(filePtr);
     return 1;
@@ -276,22 +269,24 @@ struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size){
 
 
 /*Swap pointers*/
-void swap(struct WordFreq *first, struct WordFreq *second){
+void swap(struct WordFreq **first, struct WordFreq **second){
 
-    struct WordFreq *temp;
-    temp=NULL;
+    struct WordFreq **temp = (struct WordFreq **) malloc(sizeof(struct WordFreq *));
 
-    temp = first;
-    first=second;
-    second=temp;
+
+    *temp = *first;
+    *first=*second;
+    *second=*temp;
 
 }
 
-void bubble_sort(struct WordFreq **wfpp, int size){
+
+
+
+struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size){
 
     int i;
     int j;
-    int g;
     
     /*Iterate through array of pointers and swap depending on count values (BUBBLE SORT)*/
 
@@ -303,13 +298,39 @@ void bubble_sort(struct WordFreq **wfpp, int size){
 
                 if(wfpp[j]->count < wfpp[j+1]->count){
 
-                    swap(wfpp[j], wfpp[j+1]);
+                   swap(&wfpp[j], &wfpp[j+1]);
 
                 }
         }
 
     }
 
+    return wfpp;
+
 
 }
 
+void print_results(char output[], struct WordFreq ** wfpp, int size){
+
+    FILE *outputPtr;
+    int x;
+
+    outputPtr = fopen(output, "w");
+
+    /*Checking if we can open the file*/
+
+    if(outputPtr==0){
+
+        printf("Unable to open %s \n", output);
+    }
+
+    for(x=0; x<size; x++){
+
+        fprintf(outputPtr, "%s %d\n", wfpp[x]->word, wfpp[x]->count);
+
+    }
+
+    fclose(outputPtr);
+
+
+}
