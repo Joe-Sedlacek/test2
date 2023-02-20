@@ -74,6 +74,7 @@ int process_characters(char filename[]){
     int index; 
     bool first_word;
     char *str_buff;
+    int k;
 
     /*Initializing variables*/
     buffer[0] = '\0';
@@ -115,8 +116,6 @@ int process_characters(char filename[]){
     /* variable for keeping track of where we are in array of pointers */
         if(n>= 19){ 
 
-            /*print word*/
-            printf("cString %s \n", buffer); 
 
             str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
             strcpy(str_buff, buffer);
@@ -177,13 +176,10 @@ int process_characters(char filename[]){
         /* if not a character */
         else if(n > 0){ 
 
-            /* print word */
-            printf("cString %s \n", buffer); 
 
             str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); //same as above 
             strcpy(str_buff, buffer);
 
-            /* CHECK When we malloc space for new string, Add null character! */
 
 
             /* If this is first word, add it to struct*/
@@ -224,7 +220,15 @@ int process_characters(char filename[]){
         ch = fgetc(filePtr); 
     }
 
+    printf("%d", size);
+
     bubble_sort(wfpp, size);
+
+    for(k=0; k<size; k++){
+
+        //printf("Word: %s, Count: %d \n", wfpp[k]->word, wfpp[k]->count);
+
+    }
 
     fclose(filePtr);
     return 1;
@@ -240,7 +244,6 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
     /*Iterate through array of pointers to structs*/
     while(index < size){
 
-        printf("Comparing %s to %s", buf, wfpp[index] ->word);
 
         if(strcmp(buf, wfpp[index]->word) == 0){
 
@@ -286,7 +289,27 @@ void swap(struct WordFreq *first, struct WordFreq *second){
 
 void bubble_sort(struct WordFreq **wfpp, int size){
 
+    int i;
+    int j;
+    int g;
+    
+    /*Iterate through array of pointers and swap depending on count values (BUBBLE SORT)*/
 
+
+    for(i=0; i<size-1; i++){
+
+
+            for(j=0; j<size-1; j++){
+
+                if(wfpp[j]->count < wfpp[j+1]->count){
+
+                    swap(wfpp[j], wfpp[j+1]);
+
+                }
+        }
+
+    }
 
 
 }
+
