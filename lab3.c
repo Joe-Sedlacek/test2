@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
+    /*Read file in*/
     fileOK = process_characters(argv[1], argv[2]);
 
     if(!fileOK){
@@ -110,7 +111,7 @@ int process_characters(char filename[], char output[]){
     /*make sure length doesn't go above 20? add in counter?*/
     while(ch != EOF) { 
 
-
+        /*Is word at the max length? If so, add it to struct*/
         if(n>= 19){ 
 
 
@@ -118,7 +119,7 @@ int process_characters(char filename[], char output[]){
             strcpy(str_buff, buffer);
 
 
-            /* If this is first word, add it to struct */
+            /* If this is first word, add it to struct and set count to 1*/
             if(first_word==false){
 
                 first_word=true;
@@ -158,7 +159,7 @@ int process_characters(char filename[], char output[]){
 
         }
 
-        /* if first character is in alphabet */
+        /* If first character is in alphabet, add it to word */
         if(isalpha(ch)) { 
             ch = tolower(ch);
 
@@ -170,16 +171,16 @@ int process_characters(char filename[], char output[]){
             buffer[n] = '\0'; 
         }
 
-        /* if not a character */
+        /* If it is not a character and the word is longer than 0, add it to struct */
         else if(n > 0){ 
 
-
+            /*Allocate new memory for each new string */
             str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
             strcpy(str_buff, buffer);
 
 
 
-            /* If this is first word, add it to struct*/
+            /* If this is first word, add it to struct and set count to 1*/
             if(first_word==false){
                 first_word=true;
 
@@ -188,11 +189,12 @@ int process_characters(char filename[], char output[]){
 
 
             }
+
             else{
             /*Call method to go through array of pointers to structs to see if word exists already*/
             index = is_found(str_buff, size, wfpp);
 
-            /*If word is found, increment count by 1*/
+            /*If word is found, increment count by 1, else add new word by calling add_word fxn*/
             if(index>-1){
                 wfpp[index]->count = wfpp[index]->count+1;
 
@@ -218,11 +220,13 @@ int process_characters(char filename[], char output[]){
     }
 
 
+    /*Sort in Descending Order*/
     wfpp=bubble_sort(wfpp, size);
 
-    
+    /*Print results to file*/
     print_results(output, wfpp, size);
 
+    /*Close file*/
     fclose(filePtr);
     return 1;
 }
@@ -237,7 +241,7 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
     /*Iterate through array of pointers to structs*/
     while(index < size){
 
-
+        /*If word has already been stored in a struct, return the index, else increment index and continue search*/
         if(strcmp(buf, wfpp[index]->word) == 0){
 
             return index;
@@ -252,7 +256,7 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
 
 }
 
-
+/*This method adds space for one more pointer to one more struct which will store the new word*/
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size){
 
     /*Allocate space for one more pointer*/
@@ -268,21 +272,21 @@ struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size){
 }
 
 
-/*Swap pointers*/
+/*Method to swap pointers*/
 void swap(struct WordFreq **first, struct WordFreq **second){
 
-    struct WordFreq **temp = (struct WordFreq **) malloc(sizeof(struct WordFreq *));
 
+    struct WordFreq *temp;
 
-    *temp = *first;
+    temp = *first;
     *first=*second;
-    *second=*temp;
+    *second=temp;
 
 }
 
 
 
-
+/*Method for bubble sorting in descending order*/
 struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size){
 
     int i;
@@ -310,6 +314,7 @@ struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size){
 
 }
 
+/*Method to print/write results to file*/
 void print_results(char output[], struct WordFreq ** wfpp, int size){
 
     FILE *outputPtr;
@@ -324,6 +329,7 @@ void print_results(char output[], struct WordFreq ** wfpp, int size){
         printf("Unable to open %s \n", output);
     }
 
+    /*Write all words and counts to file*/
     for(x=0; x<size; x++){
 
         fprintf(outputPtr, "%s %d\n", wfpp[x]->word, wfpp[x]->count);
