@@ -129,34 +129,27 @@ int process_characters(char filename[], char output[]){
 
             }
             else{
-            /*Call method to go through array of pointers to structs to see if word exists already*/
-            index = is_found(str_buff, size, wfpp);
-            
-            /*If word is found, increment count by 1*/
-            if(index>-1){
-                wfpp[index]->count = wfpp[index]->count+1;
+                /*Call method to go through array of pointers to structs to see if word exists already*/
+                index = is_found(str_buff, size, wfpp);
+                
+                /*If word is found, increment count by 1*/
+                if(index>-1){
+                    wfpp[index]->count = wfpp[index]->count+1;
 
+                }
+
+                else{
+                    wfpp=add_word(wfpp, str_buff, size);
+                    size++;
+                }
             }
-
-            else{
-                wfpp=add_word(wfpp, str_buff, size);
-                size++;
-            }
-        }
-
 
             /*reset null terminator*/
             buffer[0] = '\0'; 
-            
-            
 
             /*reset n*/
             n=0;
             
-            
-
-
-
         }
 
         /* If first character is in alphabet, add it to word */
@@ -191,32 +184,32 @@ int process_characters(char filename[], char output[]){
             }
 
             else{
-            /*Call method to go through array of pointers to structs to see if word exists already*/
-            index = is_found(str_buff, size, wfpp);
+                /*Call method to go through array of pointers to structs to see if word exists already*/
+                index = is_found(str_buff, size, wfpp);
 
-            /*If word is found, increment count by 1, else add new word by calling add_word fxn*/
-            if(index>-1){
-                wfpp[index]->count = wfpp[index]->count+1;
+                /*If word is found, increment count by 1, else add new word by calling add_word fxn*/
+                if(index>-1){
+                    wfpp[index]->count = wfpp[index]->count+1;
 
+                }
+
+                else{
+                    wfpp = add_word(wfpp, str_buff, size);
+                    size++;
+                }
             }
-
-            else{
-                wfpp = add_word(wfpp, str_buff, size);
-                size++;
-            }
-        }
 
             /* reset null terminator */
             buffer[0] = '\0'; 
             
             /* reset n */
             n = 0; 
-
-            
+ 
         }
 
         /* get first character again */
         ch = fgetc(filePtr); 
+        
     }
 
 
