@@ -74,6 +74,7 @@ int process_characters(char filename[], char output[]){
     int index; 
     bool first_word;
     char *str_buff;
+    int i;
 
     /*Initializing variables*/
     buffer[0] = '\0';
@@ -209,9 +210,36 @@ int process_characters(char filename[], char output[]){
 
         /* get first character again */
         ch = fgetc(filePtr); 
+
+        /*Free str_buff after eachiteration?*/
         
     }
 
+    /*in case there is nothing after the last word to signal an EOF */
+    if(strlen(buffer)>0){
+
+        /*Allocate new memory for each new string */
+        str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
+        strcpy(str_buff, buffer);
+
+        /*Call method to go through array of pointers to structs to see if word exists already*/
+        index = is_found(str_buff, size, wfpp);
+
+        /*If word is found, increment count by 1, else add new word by calling add_word fxn*/
+        if(index>-1){
+            wfpp[index]->count = wfpp[index]->count+1;
+
+        }
+
+        else{
+            wfpp = add_word(wfpp, str_buff, size);
+            size++;
+        }
+
+
+
+
+    }
 
     /*Sort in Descending Order*/
     wfpp=bubble_sort(wfpp, size);
@@ -221,6 +249,22 @@ int process_characters(char filename[], char output[]){
 
     /*Close file*/
     fclose(filePtr);
+
+
+    /*free our pointers/memory*/
+    
+    for(i=0; i<size; i++){
+        free(wfpp[i]->word);
+
+        free(wfpp[i]);
+
+    }
+
+    free(wfpp);
+    free(str_buff);
+
+
+    
     return 1;
 }
 
