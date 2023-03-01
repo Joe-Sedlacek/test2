@@ -30,7 +30,7 @@ int is_found(char buf[], int size, struct WordFreq **wfppp);
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size);
 struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size);
 void swap(struct WordFreq **first, struct WordFreq **second);
-void print_results(char output[], struct WordFreq ** wfpp, int size);
+int print_results(char output[], struct WordFreq ** wfpp, int size);
 
 
 int main(int argc, char* argv[]){
@@ -56,17 +56,12 @@ int main(int argc, char* argv[]){
 }
 
 
-/* This function allocates and builds a string buffer from file input.
-    How or if you use this function is up to you. It is only meant to demonstrate
-    this process. If you use this function, you will have to modify according
-    to your needs. E.g., the argument list may need to be modified, or you may
-    need a different type of return value.
-    You may decide to open the fie in main and pass the file pointer as an argument.
-*/
+/* This function allocates and builds a string buffer from file input. */
+
 int process_characters(char filename[], char output[]){
     char ch;
     FILE *filePtr;
-    char buffer[MAX_STRING_SIZE]; 
+    char *buffer; 
     int n;
     int size;
     /* Creating pointer to array of struct pointers*/
@@ -75,18 +70,28 @@ int process_characters(char filename[], char output[]){
     bool first_word;
     char *str_buff;
     int i;
+    
 
     /*Initializing variables*/
-    buffer[0] = '\0';
+    buffer = (char *) malloc(sizeof(char) *MAX_STRING_SIZE);
     first_word=false;
     n=0;
-
+    /* Size of pointer array is 1 becuase we have 1 unique word at this point*/
+    size=1;
+    index=0;
 
     /* Initializing pointers to NULL */
 
     filePtr=NULL;
     wfpp = NULL;
+    str_buff=NULL;
      
+
+    /* Creating space for first pointer to first struct for first word*/
+    wfpp=(struct WordFreq **) malloc(sizeof(struct WordFreq *)); 
+
+    /* Creating space for first struct for first word*/
+    wfpp[0] = (struct WordFreq *) malloc(sizeof(struct WordFreq));  
 
     /*keep track of number of words*/
     
@@ -96,27 +101,17 @@ int process_characters(char filename[], char output[]){
         return 0;
     }
 
-
-    /* Creating space for first pointer to first struct for first word*/
-    wfpp=(struct WordFreq **) malloc(sizeof(struct WordFreq *)); 
-
-    /* Creating space for first struct for first word*/
-    wfpp[0] = (struct WordFreq *) malloc(sizeof(struct WordFreq));
-
-    /* Size of pointer array is 1 becuase we have 1 unique word at this point*/
-    size=1;
-
      /*get first character from file*/
     ch = fgetc(filePtr);
 
-    /*make sure length doesn't go above 20? add in counter?*/
     while(ch != EOF) { 
 
         /*Is word at the max length? If so, add it to struct*/
         if(n>= 19){ 
 
 
-            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
+            str_buff = (char *) malloc(sizeof(char) * (strlen(buffer)+1)); 
+            str_buff[strlen(buffer)]='\0';
             strcpy(str_buff, buffer);
 
 
@@ -141,16 +136,16 @@ int process_characters(char filename[], char output[]){
 
                 else{
                     wfpp=add_word(wfpp, str_buff, size);
-                    size++;
+                    size = size +1;
                 }
             }
 
             /*reset null terminator*/
             buffer[0] = '\0'; 
-
             /*reset n*/
             n=0;
-            
+            free((void*)str_buff); 
+            str_buff=NULL;
         }
 
         /* If first character is in alphabet, add it to word */
@@ -169,7 +164,8 @@ int process_characters(char filename[], char output[]){
         else if(n > 0){ 
 
             /*Allocate new memory for each new string */
-            str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
+            str_buff = (char *) malloc(sizeof(char) * (strlen(buffer)+1)); 
+            str_buff[strlen(buffer)]='\0';
             strcpy(str_buff, buffer);
 
 
@@ -196,22 +192,23 @@ int process_characters(char filename[], char output[]){
 
                 else{
                     wfpp = add_word(wfpp, str_buff, size);
-                    size++;
+                    size = size +1;
                 }
             }
 
             /* reset null terminator */
             buffer[0] = '\0'; 
-            
             /* reset n */
             n = 0; 
- 
+            free((void*)str_buff);
+            str_buff=NULL;
+
         }
 
         /* get first character again */
         ch = fgetc(filePtr); 
 
-        /*Free str_buff after eachiteration?*/
+        /*free((void*)str_buff);*/
         
     }
 
@@ -219,9 +216,9 @@ int process_characters(char filename[], char output[]){
     if(strlen(buffer)>0){
 
         /*Allocate new memory for each new string */
-        str_buff = (char *) malloc(sizeof(char) * MAX_STRING_SIZE); 
+        str_buff = (char *) malloc(sizeof(char) * (strlen(buffer)+1)); 
+        str_buff[strlen(buffer)]='\0';
         strcpy(str_buff, buffer);
-
         /*Call method to go through array of pointers to structs to see if word exists already*/
         index = is_found(str_buff, size, wfpp);
 
@@ -233,12 +230,13 @@ int process_characters(char filename[], char output[]){
 
         else{
             wfpp = add_word(wfpp, str_buff, size);
-            size++;
+            size = size +1;
         }
 
 
 
-
+       free((void*)str_buff);
+       str_buff=NULL;
     }
 
     /*Sort in Descending Order*/
@@ -253,17 +251,15 @@ int process_characters(char filename[], char output[]){
 
     /*free our pointers/memory*/
     
-    for(i=0; i<size; i++){
-        free(wfpp[i]->word);
+    for(i=0; i<size; ++i){
+        /*free((void *)wfpp[i]->word);*/
 
-        free(wfpp[i]);
+        free((void*)wfpp[i]);
 
     }
 
-    free(wfpp);
-    free(str_buff);
-
-
+    free((void*)buffer);
+    free((void*)wfpp);
     
     return 1;
 }
@@ -297,7 +293,7 @@ int is_found(char buf[], int size, struct WordFreq **wfpp){
 struct WordFreq ** add_word(struct WordFreq **wfpp, char buf[], int size){
 
     /*Allocate space for one more pointer*/
-    wfpp = (struct WordFreq**) realloc((void*) wfpp, (sizeof(struct WordFreq *) * size) + 1);
+    wfpp = (struct WordFreq**) realloc((void*) wfpp, (sizeof(struct WordFreq *) * (size + 1)));
     /*Allocate space for one more struct*/
     wfpp[size] = (struct WordFreq *) malloc(sizeof(struct WordFreq));
 
@@ -352,7 +348,7 @@ struct WordFreq ** bubble_sort(struct WordFreq **wfpp, int size){
 }
 
 /*Method to print/write results to file*/
-void print_results(char output[], struct WordFreq ** wfpp, int size){
+int print_results(char output[], struct WordFreq ** wfpp, int size){
 
     FILE *outputPtr;
     int x;
@@ -364,16 +360,17 @@ void print_results(char output[], struct WordFreq ** wfpp, int size){
     if(outputPtr==0){
 
         printf("Unable to open %s \n", output);
+        return 0;
     }
 
     /*Write all words and counts to file*/
-    for(x=0; x<size; x++){
+    for(x=0; x<size; ++x){
 
         fprintf(outputPtr, "%s %d\n", wfpp[x]->word, wfpp[x]->count);
-
+        
     }
 
     fclose(outputPtr);
 
-
+    return 1;
 }
