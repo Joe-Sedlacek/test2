@@ -399,8 +399,6 @@ int print_results(char output[], struct WordFreq ** wfpp, int size) {
     for (i=0; i<size; ++i) {
         fprintf(outputPtr, "%s %d\n", wfpp[i]->word, wfpp[i]->count);
     }
-
     fclose(outputPtr);
-
     return 1;
 }
