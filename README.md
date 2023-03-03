@@ -1,7 +1,7 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=10135216&assignment_repo_type=AssignmentRepo)
 # Lab 3 - Word Count Problem Description
 
-NAME (Replace with your name)
+Joe Sedlacek
 
 Be sure to run the following command after creating your program file **lab3.c** to have Git track your source code file and upload your program to your repository for grading. **Do not** commit and upload and binary files to your assignment's repository.
 
