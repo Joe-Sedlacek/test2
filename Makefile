@@ -4,8 +4,8 @@
 # 9/26/2020
 # CSC 250 Lab 3
 
-SOURCE = lab3_soln.c
-EXECUTABLE = lab3
+SOURCE = lab3.c
+EXECUTABLE = a.out
 COMPILE_FLAGS = -ansi -pedantic -Wall -g
 
 all: tidy
